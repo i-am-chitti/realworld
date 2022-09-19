@@ -7,25 +7,26 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { IsEmail } from 'class-validator';
-// import * as argon2 from 'argon2';
+import * as argon2 from 'argon2';
 import { ArticleEntity } from '../article/article.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('user')
 export class UserEntity {
-
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+	unique: true
+  })
   username: string;
 
-  @Column()
-  @IsEmail()
+  @Column({
+	unique: true
+  })
   email: string;
 
-  @Column({ default: "I am awesome!" })
+  @Column({ default: 'I am awesome!' })
   bio: string;
 
   @Column({ default: 'https://placekitten.com/640/360' })
@@ -35,10 +36,10 @@ export class UserEntity {
   @Exclude()
   password: string;
 
-  //   @BeforeInsert()
-  //   async hashPassword() {
-  //     this.password = await argon2.hash(this.password);
-  //   }
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await argon2.hash(this.password);
+  }
 
   @ManyToMany((type) => ArticleEntity)
   @JoinTable()
@@ -50,5 +51,4 @@ export class UserEntity {
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }
-
 }
