@@ -22,11 +22,25 @@ export class UserService {
       username: loginData.username,
     });
     if (!user) return null;
+    return user;
+  }
 
-    if (await argon2.verify(user.password, loginData.password)) {
+  async loginUser(loginData: LoginUserDto) {
+    const _user = await this.findOne(loginData);
+    const errors = [{ user: 'Not Found' }];
+    if (!_user) {
+      throw new HttpException({ message: 'User not exists.', errors }, 401);
+    }
+    if (await argon2.verify(_user.password, loginData.password)) {
+      const token = this.generateJWT(_user);
+      const user = { ..._user, token };
+      delete user.password;
       return user;
     }
-    return null;
+    throw new HttpException(
+      { message: 'Wrong Password', errors: [{ user: 'Invalid Credentials' }] },
+      401,
+    );
   }
 
   async findAll(): Promise<UserEntity[]> {
