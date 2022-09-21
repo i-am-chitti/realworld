@@ -3,6 +3,7 @@ import { DeleteUserDto } from './dtos/delete-user.dto';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { User } from './user.decorator';
 import { UserService } from './user.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -10,9 +11,9 @@ import { UserService } from './user.service';
 export class UserController {
 	constructor(private userService: UserService) {}
 
-	@Get()
-	async findMe() {
-		return "Here I am";
+	@Get('me')
+	async findMe(@User('id') userId: number) {
+		return this.userService.findById(userId);
 	}
 
 	@Get('all')
@@ -20,8 +21,8 @@ export class UserController {
 		return this.userService.findAll();
 	}
 
-	@Patch(':username')
-	async update(@Param('username') username: string, @Body() updateUserData: UpdateUserDto) {
+	@Patch('me')
+	async updateMyself(@User('username') username: string, @Body() updateUserData: UpdateUserDto) {
 		return this.userService.update(username, updateUserData);
 	}
 
