@@ -1,5 +1,6 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpException, Param, Patch, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { DeleteUserDto } from './dtos/delete-user.dto';
+import { LoginUserDto } from './dtos/login-user.dto';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserService } from './user.service';
@@ -35,7 +36,15 @@ export class UserController {
 	}
 
 	@Post('login')
-	async login() {
-		return "User will be logged in";
+	async login(@Body() loginData: LoginUserDto) {
+		const _user = await this.userService.findOne(loginData);
+		const errors = [{ user: "Not Found" }];
+		if(!_user) {
+			throw new HttpException({message: "User not exists.", errors}, 401);
+		}
+		const token = this.userService.generateJWT(_user);
+		const user = {..._user, token};
+		delete user.password;
+		return user;
 	}
 }

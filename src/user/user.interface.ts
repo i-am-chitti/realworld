@@ -8,3 +8,8 @@ export interface UserData {
 export interface UserRO {
 	user: UserData;
 }
+
+export interface UserDbData extends UserData {
+	id: number;
+	password: string;
+}
