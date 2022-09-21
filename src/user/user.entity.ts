@@ -33,7 +33,7 @@ export class UserEntity {
   image: string;
 
   @Column()
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @BeforeInsert()
