@@ -32,7 +32,7 @@ export class UserEntity {
   @Column({ default: 'https://placekitten.com/640/360' })
   image: string;
 
-  @Column()
+  @Column({ select: false })
   @Exclude({ toPlainOnly: true })
   password: string;
 
@@ -48,7 +48,4 @@ export class UserEntity {
   @OneToMany((type) => ArticleEntity, (article) => article.author)
   articles: ArticleEntity[];
 
-  constructor(partial: Partial<UserEntity>) {
-    Object.assign(this, partial);
-  }
 }
