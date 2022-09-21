@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { API_VERSION } from './utils/constants';
+import { API_BASE_PREFIX, API_VERSION } from './utils/constants';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -11,9 +11,7 @@ async function bootstrap() {
     whitelist: true,
 }));
 
-  const basePrefix = `/api/${API_VERSION}`;
-
-  app.setGlobalPrefix(basePrefix);
+  app.setGlobalPrefix(API_BASE_PREFIX);
   const config = new DocumentBuilder()
     .setTitle('Nestjs RealWorld App')
     .setDescription('The RealWorld API description')
