@@ -7,10 +7,11 @@ import { UserEntity } from 'src/user/user.entity';
 import { CommentEntity } from './comment.entity';
 import { AuthMiddleware } from 'src/user/auth.middleware';
 import { UserModule } from 'src/user/user.module';
+import { TagEntity } from 'src/tag/tag.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ArticleEntity, UserEntity, CommentEntity]),
+    TypeOrmModule.forFeature([ArticleEntity, UserEntity, CommentEntity, TagEntity]),
 	UserModule
   ],
   controllers: [ArticleController],

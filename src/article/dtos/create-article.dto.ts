@@ -16,5 +16,5 @@ export class CreateArticleDto {
 
 	@IsArray()
 	@IsOptional()
-	readonly tagList: string[];
+	readonly tags: number[];
   }

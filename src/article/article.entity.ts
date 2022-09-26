@@ -2,14 +2,16 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
   ManyToOne,
+  ManyToMany,
   OneToMany,
   JoinColumn,
   BeforeUpdate,
+  JoinTable,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { CommentEntity } from './comment.entity';
+import { TagEntity } from '../tag/tag.entity';
 
 @Entity('article')
 export class ArticleEntity {
@@ -39,8 +41,9 @@ export class ArticleEntity {
     this.updated = new Date();
   }
 
-  @Column('simple-array')
-  tagList: string[];
+  @ManyToMany(() => TagEntity)
+  @JoinTable()
+  tags: TagEntity[];
 
   @ManyToOne((type) => UserEntity, (user) => user.articles)
   author: UserEntity;
