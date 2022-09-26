@@ -35,14 +35,18 @@ export class ArticleModule implements NestModule {
         path: 'articles/:slug/comments',
         method: RequestMethod.POST,
       },
-	  {
-		path: 'articles/:slug/comments/:id',
-		method: RequestMethod.DELETE
-	  },
-	  {
-		path: 'articles/:slug',
-		method: RequestMethod.PUT
-	  }
+      {
+        path: 'articles/:slug/comments/:id',
+        method: RequestMethod.DELETE,
+      },
+      {
+        path: 'articles/:slug',
+        method: RequestMethod.PUT,
+      },
+      {
+        path: 'articles/:slug',
+        method: RequestMethod.DELETE,
+      },
     );
   }
 }
