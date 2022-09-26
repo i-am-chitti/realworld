@@ -38,6 +38,10 @@ export class ArticleModule implements NestModule {
 	  {
 		path: 'articles/:slug/comments/:id',
 		method: RequestMethod.DELETE
+	  },
+	  {
+		path: 'articles/:slug',
+		method: RequestMethod.PUT
 	  }
     );
   }

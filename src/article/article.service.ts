@@ -89,11 +89,42 @@ export class ArticleService {
       slug,
       author: user,
       ...(articleData.tags && {
-        tags: await this.tagRepository.findBy({ id: In(articleData.tags) }),
+        tags: await this.findTags(articleData.tags),
       }),
     });
     const savedArticle = this.articleRepository.save(newArticle);
     return savedArticle;
+  }
+
+  async findTags(tags: number[]) {
+    return await this.tagRepository.findBy({ id: In(tags) });
+  }
+
+  async update(userId: number, slug: string, articleData: CreateArticleDto) {
+    let toUpdate = await this.findOne(slug);
+
+    if (toUpdate.author.id !== userId) {
+      throw new HttpException(
+        {
+          message: 'No sufficient permission to update this article',
+          errors: ['Insufficient permission'],
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    let updatedArticleData = {
+      ...toUpdate,
+      articleData,
+      tags:
+        articleData.tags?.length > 0
+          ? await this.findTags(articleData.tags)
+          : [],
+    };
+    const updatedaArticle = await this.articleRepository.save(
+      updatedArticleData,
+    );
+    return updatedaArticle;
   }
 
   async addComment(slug: string, commentData: CreateCommentDto) {
@@ -133,7 +164,7 @@ export class ArticleService {
 
   async findAllComments(slug: string, query: CommentsQueryDto) {
     let article = await this.findOne(slug);
-	//TODO - Paginate comments
+    //TODO - Paginate comments
     return article.comments;
   }
 

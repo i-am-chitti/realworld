@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -44,6 +45,15 @@ export class ArticleController {
     @Body() articleData: CreateArticleDto,
   ) {
     return this.articleService.create(userId, articleData);
+  }
+
+  @ApiOperation({ summary: 'Update article' })
+  @ApiResponse({ status: 201, description: 'The article has been successfully updated.'})
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @Put(':slug')
+  async update(@User('id') userId: number, @Param('slug') slug: string, @Body() articleData: CreateArticleDto) {
+    // Todo: update slug also when title gets changed
+    return this.articleService.update(userId, slug, articleData);
   }
 
   @ApiOperation({ summary: 'Add a comment to an article' })
