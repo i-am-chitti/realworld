@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { ArticleModule } from './article/article.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -16,9 +18,11 @@ import { UserModule } from './user/user.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [ __dirname + '/**/*.entity{.ts,.js}' ],
-      synchronize: true,
+      synchronize: false,
     }),
     UserModule,
+    ArticleModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],

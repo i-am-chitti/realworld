@@ -18,8 +18,11 @@ export class UserService {
   ) {}
 
   async findOne(loginData: LoginUserDto) {
-    const user = await this.userRepository.findOneBy({
-      username: loginData.username,
+    const user = await this.userRepository.findOne({
+      select: ['id', 'username', 'email', 'bio', 'image', 'password'],
+      where: {
+        username: loginData.username,
+      },
     });
     if (!user) return null;
     return user;
@@ -31,6 +34,7 @@ export class UserService {
     if (!_user) {
       throw new HttpException({ message: 'User not exists.', errors }, 401);
     }
+
     if (await argon2.verify(_user.password, loginData.password)) {
       const token = this.generateJWT(_user);
       const user = { ..._user, token };
