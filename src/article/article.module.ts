@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,14 +16,29 @@ import { TagEntity } from 'src/tag/tag.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ArticleEntity, UserEntity, CommentEntity, TagEntity]),
-	UserModule
+    TypeOrmModule.forFeature([
+      ArticleEntity,
+      UserEntity,
+      CommentEntity,
+      TagEntity,
+    ]),
+    UserModule,
   ],
   controllers: [ArticleController],
   providers: [ArticleService],
 })
 export class ArticleModule implements NestModule {
-	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(AuthMiddleware).forRoutes({path: 'articles', method: RequestMethod.POST});
-	}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes(
+      { path: 'articles', method: RequestMethod.POST },
+      {
+        path: 'articles/:slug/comments',
+        method: RequestMethod.POST,
+      },
+	  {
+		path: 'articles/:slug/comments/:id',
+		method: RequestMethod.DELETE
+	  }
+    );
+  }
 }

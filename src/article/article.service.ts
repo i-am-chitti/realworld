@@ -8,6 +8,8 @@ import { CreateArticleDto } from './dtos/create-article.dto';
 import * as slug from 'slug';
 import { ArticlesQueryDto } from './dtos/articles-query.dto';
 import { TagEntity } from 'src/tag/tag.entity';
+import { CreateCommentDto } from './dtos/create-comment.dto';
+import { CommentsQueryDto } from './dtos/comments-query.dto';
 
 @Injectable()
 export class ArticleService {
@@ -92,6 +94,47 @@ export class ArticleService {
     });
     const savedArticle = this.articleRepository.save(newArticle);
     return savedArticle;
+  }
+
+  async addComment(slug: string, commentData: CreateCommentDto) {
+    let article = await this.findOne(slug);
+
+    const newComment = this.commentRepository.create({
+      ...commentData,
+      article,
+    });
+    const savedComment = await this.commentRepository.save(newComment);
+    article.comments.push(savedComment);
+    return savedComment;
+  }
+
+  async deleteComment(slug: string, id: number) {
+    let article = await this.findOne(slug);
+
+    const comment = await this.commentRepository.findOneBy({ id });
+    const deleteIndex = article.comments.findIndex(
+      (_comment) => _comment.id === comment.id,
+    );
+
+    if (deleteIndex >= 0) {
+      const deleteComments = article.comments.splice(deleteIndex, 1);
+      await this.commentRepository.delete(deleteComments[0].id);
+      article = await this.articleRepository.save(article);
+      return deleteComments[0];
+    } else {
+      throw new HttpException(
+        {
+          message: 'Comment does not exists',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async findAllComments(slug: string, query: CommentsQueryDto) {
+    let article = await this.findOne(slug);
+	//TODO - Paginate comments
+    return article.comments;
   }
 
   slugify(title: string) {
