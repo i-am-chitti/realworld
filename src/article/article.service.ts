@@ -50,7 +50,6 @@ export class ArticleService {
     }
 
     const [items, count] = await this.articleRepository.findAndCount({
-      relations: ['author', 'tags'],
       order: {
         created: 'DESC',
       },
@@ -70,6 +69,10 @@ export class ArticleService {
       items,
       count,
     };
+  }
+
+  async findOne(slug: string) {
+    return await this.articleRepository.findOneBy({ slug });
   }
 
   async create(userId: number, articleData: CreateArticleDto) {
