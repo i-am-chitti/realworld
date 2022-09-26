@@ -41,11 +41,15 @@ export class ArticleEntity {
     this.updated = new Date();
   }
 
-  @ManyToMany(() => TagEntity)
+  @ManyToMany(() => TagEntity, {
+	eager: true
+  })
   @JoinTable()
   tags: TagEntity[];
 
-  @ManyToOne((type) => UserEntity, (user) => user.articles)
+  @ManyToOne((type) => UserEntity, (user) => user.articles, {
+	eager: true
+  })
   author: UserEntity;
 
   @OneToMany((type) => CommentEntity, (comment) => comment.article, {
