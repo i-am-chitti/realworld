@@ -74,7 +74,17 @@ export class ArticleService {
   }
 
   async findOne(slug: string) {
-    return await this.articleRepository.findOneBy({ slug });
+    let article = await this.articleRepository.findOneBy({ slug });
+    if (!article) {
+      throw new HttpException(
+        {
+          message: 'Article with given slug does not exist',
+          errors: 'Data input validation failed',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return article;
   }
 
   async create(userId: number, articleData: CreateArticleDto) {
@@ -125,6 +135,20 @@ export class ArticleService {
       updatedArticleData,
     );
     return updatedaArticle;
+  }
+
+  async delete(userId: number, slug: string) {
+    let article = await this.findOne(slug);
+    if (article.author.id !== userId) {
+      throw new HttpException(
+        {
+          message: 'No sufficient permission to delete this article',
+          errors: ['Insufficient permission'],
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return await this.articleRepository.delete({ slug });
   }
 
   async addComment(slug: string, commentData: CreateCommentDto) {
