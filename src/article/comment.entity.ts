@@ -10,6 +10,11 @@ export class CommentEntity {
   @Column()
   body: string;
 
-  @ManyToOne(type => ArticleEntity, article => article.comments)
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created: Date;
+
+  //TODO - add commentator column
+
+  @ManyToOne((type) => ArticleEntity, (article) => article.comments)
   article: ArticleEntity;
 }
